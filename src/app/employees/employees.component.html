@@ -1,0 +1,10 @@
+<h1>List of Employees</h1>
+<button routerLink="/add-employee">Add Employee</button>
+<ul>
+  <li *ngFor="let employee of employees">
+        {{ employee.first_name }} - {{ employee.last_name }} - {{ employee.email }} - {{ employee.gender }} - {{ employee.salary }} 
+        <!-- add buttons for update and delete -->
+        <button routerLink="/update-employee/{{employee.id}}">Update</button>
+        <button (click)="deleteEmployee(employee.id)">Delete</button> 
+  </li>
+</ul>
