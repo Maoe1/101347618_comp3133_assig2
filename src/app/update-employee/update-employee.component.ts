@@ -1,10 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Apollo } from 'apollo-angular';
-import gql from 'graphql-tag';
+import { ActivatedRoute } from '@angular/router';
+import { Apollo, gql } from 'apollo-angular';
 
+
+export class Employee {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  gender: string;
+  salary: number;
+
+  constructor(id: string, first_name: string, last_name: string, email: string, gender: string, salary: number) {
+    this.id = id;
+    this.first_name = first_name;
+    this.last_name = last_name;
+    this.email = email;
+    this.gender = gender;
+    this.salary = salary;
+  }
+}
 const UPDATE_EMPLOYEE = gql`
-  mutation UpdateEmployee($id: ID!, $input: UpdateEmployeeInput!) {
+  mutation updateEmployee($id: ID!, $input: UpdateEmployeeInput!) {
     updateEmployee(id: $id, input: $input) {
       success
       message
@@ -20,19 +37,27 @@ const UPDATE_EMPLOYEE = gql`
   }
 `;
 
-interface Employee {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  gender: string;
-  salary: number;
-}
+const SEARCH_EMPLOYEE = gql`
+  query searchEmployee($id: ID!) {
+    searchEmployee(id: $id) {
+      success
+      message
+      employee {
+        id
+        first_name
+        last_name
+        email
+        gender
+        salary
+      }
+    }
+  }
+`;
 
 @Component({
   selector: 'app-update-employee',
   templateUrl: './update-employee.component.html',
-  styleUrls: ['./update-employee.component.css'],
+  styleUrls: ['./update-employee.component.css']
 })
 export class UpdateEmployeeComponent implements OnInit {
   employee: Employee = {
@@ -41,62 +66,40 @@ export class UpdateEmployeeComponent implements OnInit {
     last_name: '',
     email: '',
     gender: '',
-    salary: 0,
+    salary: 0
   };
 
-  constructor(
-    private apollo: Apollo,
-    private router: Router,
-    private route: ActivatedRoute
-  ) {}
+  constructor(private route: ActivatedRoute, private apollo: Apollo) { }
 
   ngOnInit(): void {
-    // Get the employee ID from the route params and fetch the corresponding employee data
     const id = this.route.snapshot.paramMap.get('id');
-    this.apollo
-      .query<{ employee: Employee }>({
-        query: gql`
-          query GetEmployee($id: ID!) {
-            employee(id: $id) {
-              id
-              first_name
-              last_name
-              email
-              gender
-              salary
-            }
-          }
-        `,
-        variables: { id },
-      })
-      .subscribe((result) => {
-        this.employee = result.data.employee;
-      });
+
+    this.apollo.query<{ searchEmployee: { employee: Employee } }>({
+      query: SEARCH_EMPLOYEE,
+      variables: { id }
+    }).subscribe(result => {
+      this.employee = result.data.searchEmployee.employee;
+    });
   }
 
-  updateEmployee(event: Event): void {
-    this.apollo
-      .mutate({
-        mutation: UPDATE_EMPLOYEE,
-        variables: {
-          id: this.employee.id,
-          input: {
-            first_name: this.employee.first_name,
-            last_name: this.employee.last_name,
-            email: this.employee.email,
-            gender: this.employee.gender,
-            salary: this.employee.salary,
-          },
-        },
-      })
-      .subscribe(
-        (result) => {
-          console.log('Update employee result:', result);
-          this.router.navigate(['/employees']);
-        },
-        (error) => {
-          console.error('Update employee error:', error);
-        }
-      );
+  updateEmployee(): void {
+    const id = this.employee.id;
+    const input = {
+      first_name: this.employee.first_name,
+      last_name: this.employee.last_name,
+      email: this.employee.email,
+      gender: this.employee.gender,
+      salary: this.employee.salary
+    };
+
+    this.apollo.mutate<{ updateEmployee: { employee?: Employee } }>({
+      mutation: UPDATE_EMPLOYEE,
+      variables: { id, input }
+    }).subscribe(result => {
+      const updatedEmployee = result.data?.updateEmployee?.employee;
+      if (updatedEmployee) {
+        this.employee = { ...this.employee, ...updatedEmployee };
+      }
+    });
   }
 }
