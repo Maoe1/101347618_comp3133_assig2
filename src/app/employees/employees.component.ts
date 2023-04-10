@@ -74,28 +74,41 @@ export class EmployeesComponent {
 }
 
 deleteEmployee(id: string): void {
+  console.log(id);
   this.apollo.mutate({
     mutation: DELETE_EMPLOYEE,
     variables: {
       id
-    }
+    },
+    refetchQueries: [{
+      query: EMPLOYEES_QUERY
+    }]
   }).subscribe(result => {
-    console.log('Delete employee result:', result);
-    // Remove the deleted employee from the employees array
+    console.log('Delete employee response:', result);
     this.employees = this.employees.filter(employee => employee.id !== id);
   }, error => {
     console.error('Delete employee error:', error);
   });
 }
+ngOnInit(): void {
+  this.route.queryParams.subscribe(() => {
+    this.fetchEmployees();
+  });
+}
 
+fetchEmployees(): void {
+  this.apollo
+    .query<QueryResponse>({
+      query: EMPLOYEES_QUERY,
+    })
+    .subscribe(({ data }) => {
+      this.employees = data.employees;
+    });
+}
 
-  ngOnInit(): void {
-    this.apollo
-      .query<QueryResponse>({
-        query: EMPLOYEES_QUERY
-      })
-      .subscribe(({ data }) => {
-        this.employees = data.employees;
-      });
-  }
+refresh(): void {
+  this.apollo.client.resetStore().then(() => {
+    this.fetchEmployees();
+  });
+}
 }

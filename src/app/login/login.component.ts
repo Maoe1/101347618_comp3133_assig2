@@ -22,6 +22,7 @@ const LOGIN_QUERY = gql`
 export class LoginComponent {
   username!: string;
   password!: string;
+  errorMessage = '';
 
   constructor(private apollo: Apollo, private router: Router) {}
 
@@ -39,11 +40,12 @@ export class LoginComponent {
       .subscribe(
         ({ data }) => {
           console.log(data?.login);
+          localStorage.setItem('token', data?.login);
           this.router.navigate(['/employees']);
         },
         error => {
-          console.error(error);
-          // Handle the error
+          console.error(error.message);
+          this.errorMessage = error.message;
         }
       );
   }

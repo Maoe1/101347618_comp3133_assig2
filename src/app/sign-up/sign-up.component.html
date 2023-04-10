@@ -1,14 +1,16 @@
-<form (submit)="login($event)">
+<form (submit)="signup($event)">
   <div *ngIf="errorMessage" style="background-color: red; color: white;">{{ errorMessage }}</div>
     <div>
       <label for="username">username:</label>
       <input type="text" name="username" [(ngModel)]="username" required>
     </div>
     <div>
+        <label for="email">email:</label>
+        <input type="email" name="email" [(ngModel)]="email" required>
+      </div>
+    <div>
       <label for="password">Password:</label>
       <input type="password" name="password" [(ngModel)]="password" required>
     </div>
-    <button type="submit">Login</button>
+    <button type="submit">Sign Up</button>
   </form>
-  <p>Don't have an account? <a routerLink="/signup">Sign up</a></p>
- 

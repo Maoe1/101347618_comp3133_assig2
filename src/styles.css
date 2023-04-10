@@ -1,1 +1,48 @@
-/* You can add global styles to this file, and also import other style files */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .nav-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  
+  .nav-link {
+    margin-right: 10px;
+    padding: 5px 10px;
+    flex-grow: 0; /* Set flex-grow to 0 */
+  }
+  
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .nav-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  
+  .nav-link {
+    margin-right: 10px;
+    padding: 5px 10px;
+    flex-grow: 0; /* Set flex-grow to 0 */
+  }
+  
+  .nav-title {
+    margin-right: auto;
+  }
+
+  .nav-title {
+    background-color: blue;
+    padding: 10px;
+    color: white; /* optional, to ensure text is visible */
+  }
+  
+  
+  

@@ -1,8 +1,11 @@
-<!-- app.component.html -->
 <nav>
-    <a routerLink="/">Home</a>
-    <a routerLink="/login">Login</a>
-    <a routerLink="/employees">Employees</a>
-  </nav>
-  <router-outlet></router-outlet>
-  
+  <h5 class="nav-title">Employment Management</h5>
+  <div class="nav-header">
+    <a routerLink="/add-employee" class="nav-link">Add Employee</a>
+    <a routerLink="/employees" class="nav-link">Employees</a>
+    <a *ngIf="authguard.isLoggedIn()">
+      <button (click)="authguard.logout()">Logout</button>
+    </a>
+  </div>
+</nav>
+<router-outlet></router-outlet>
